@@ -1,5 +1,5 @@
 ---
-title: "Help: In class Hackathon and Forecasting Vompetition"
+title: "Help Session: In-class Hackathon and Forecasting Competition"
 ---
 
 | Component       | Identification from Plot                 | Rule / Recommendation                 |
