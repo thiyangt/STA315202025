@@ -1,0 +1,4 @@
+"0",""
+"0","# Plot PACF"
+"0","pacf(ma2, main = ""PACF of MA(2) Process"")"
+"0",""

@@ -60,14 +60,14 @@
     "href": "about.html",
     "title": "Help: In class Hackathon and Forecasting Vompetition",
     "section": "",
-    "text": "library(tidyverse)\nlibrary(fable)\nlibrary(tsibble)\nlibrary(lubridate)"
+    "text": "Component\nIdentification from Plot\nRule / Recommendation\n\n\n\n\nAR order (p)\nPACF significant spikes at lags 1,2…\nNumber of significant spikes in PACF\n\n\nMA order (q)\nACF significant spikes at lags 1,2…\nNumber of significant spikes in ACF\n\n\nSeasonal AR (P)\nPACF spike at seasonal lag (s, 2s, …)\nNumber of significant seasonal spikes\n\n\nSeasonal MA (Q)\nACF spike at seasonal lag (s, 2s, …)\nNumber of significant seasonal spikes\n\n\nDifferencing (d)\nTrend in series → difference once\nUse ndiffs() in R\n\n\nSeasonal diff(D)\nSeasonal pattern → seasonal difference\nUse nsdiffs() in R\nAdditional reading\nhttps://chih-ling-hsu.github.io/2017/03/20/time-series"
   },
   {
     "objectID": "about.html#packages",
     "href": "about.html#packages",
     "title": "Help: In class Hackathon and Forecasting Vompetition",
-    "section": "",
-    "text": "library(tidyverse)\nlibrary(fable)\nlibrary(tsibble)\nlibrary(lubridate)"
+    "section": "Packages",
+    "text": "Packages\n\nlibrary(tidyverse)\nlibrary(fable)\nlibrary(tsibble)\nlibrary(lubridate)"
   },
   {
     "objectID": "about.html#read-data",

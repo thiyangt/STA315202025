@@ -2,6 +2,43 @@
 title: "Help: In class Hackathon and Forecasting Vompetition"
 ---
 
+| Component       | Identification from Plot                 | Rule / Recommendation                 |
+|-----------------|----------------------------------------|---------------------------------------|
+| AR order (p)    | PACF significant spikes at lags 1,2…    | Number of significant spikes in PACF  |
+| MA order (q)    | ACF significant spikes at lags 1,2…     | Number of significant spikes in ACF   |
+| Seasonal AR (P) | PACF spike at seasonal lag (s, 2s, …)  | Number of significant seasonal spikes |
+| Seasonal MA (Q) | ACF spike at seasonal lag (s, 2s, …)   | Number of significant seasonal spikes |
+| Differencing (d)| Trend in series → difference once       | Use ndiffs() in R                      |
+| Seasonal diff(D)| Seasonal pattern → seasonal difference | Use nsdiffs() in R                     |
+
+| Model | ACF Behavior          | PACF Behavior         |
+|-------|---------------------|---------------------|
+| AR(p) | Tails off gradually  | Cuts off after lag p |
+| MA(q) | Cuts off after lag q | Tails off gradually |
+| ARMA(p,q) | Tails off gradually | Tails off gradually |
+
+Additional reading
+
+[https://chih-ling-hsu.github.io/2017/03/20/time-series](https://chih-ling-hsu.github.io/2017/03/20/time-series)
+
+
+```{r, echo=FALSE, eval=FALSE}
+library(forecast)
+
+set.seed(123)
+
+# Simulate MA(2) process
+ma2 <- arima.sim(n = 100, list(ma = c(0.9, 0.5)))  # MA(2) with theta1=0.7, theta2=0.3
+
+# Plot ACF
+acf(ma2, main = "ACF of MA(2) Process")
+
+# Plot PACF
+pacf(ma2, main = "PACF of MA(2) Process")
+
+```
+
+
 ## Packages
 
 ```{r, echo=TRUE, warning=FALSE, message=FALSE}
