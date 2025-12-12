@@ -1,5 +1,142 @@
 ---
-title: "About"
+title: "Help: In class Hackathon and Forecasting Vompetition"
 ---
 
-About this site
+## Packages
+
+```{r, echo=TRUE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(fable)
+library(tsibble)
+library(lubridate)
+```
+
+## Read Data
+
+```{r}
+library(readr)
+train <- read_csv("train.csv")
+#View(train)
+train
+```
+
+## Convert data into tsible
+
+```{r}
+library(dplyr)
+
+train |>
+  group_by(Date) |>
+  summarise(n = n()) |>
+  filter(n > 1)
+
+```
+
+
+```{r}
+duplicates_with_counts <- train |>
+  group_by(Date) |>
+  filter(n() > 1) |>       # Keep only dates that appear more than once
+  mutate(count = n()) |>   # Add a column showing how many times this date appears
+  ungroup() |>
+  arrange(Date)
+
+duplicates_with_counts
+
+```
+
+
+```{r}
+# Correct the dates for rows 881 and 882
+train <- train %>%
+  mutate(Date = case_when(
+    ID == 881 ~ "30.05.2025",
+    ID == 882 ~ "31.05.2025",
+    TRUE ~ Date
+  ))
+```
+
+```{r}
+train |>
+  group_by(Date) |>
+  filter(n() > 1) |>       # Keep only dates that appear more than once
+  mutate(count = n()) |>   # Add a column showing how many times this date appears
+  ungroup() |>
+  arrange(Date)
+```
+
+```{r}
+# --- Convert to tsibble ---
+df_ts <- train |>
+  mutate(Date = dmy(Date)) |>        # Convert "01.01.2023" to Date format
+  as_tsibble(index = Date)
+
+df_ts
+```
+
+## Split data to training and test
+
+```{r}
+# Find the last date
+last_day <- max(df_ts$Date)
+
+# First day of the last month
+first_test_day <- floor_date(last_day, "month")
+
+# Split
+train <- df_ts %>% filter(Date < first_test_day)
+test  <- df_ts %>% filter(Date >= first_test_day)
+
+head(train)
+tail(train)
+head(test)
+tail(test)
+
+```
+
+```{r}
+library(feasts)
+train |>
+  autoplot(Value)
+train |>
+  ACF(Value) |>
+  autoplot() +
+  labs(title = "ACF Plot of Value")
+train |>
+  PACF(Value) |>
+  autoplot() +
+  labs(title = "PACF Plot of Value")
+```
+
+```{r}
+train |>
+  mutate(Value_diff = difference(Value)) |>  # Take first difference
+  ACF(Value_diff, na_action = "omit") |>    # Compute ACF
+  autoplot() +
+  labs(title = "ACF Plot of Differenced Value")
+```
+
+```{r}
+forecast::findfrequency(train)
+```
+
+```{r}
+sarima_auto <- train |>
+  model(
+    auto = ARIMA(Value ~ pdq() + PDQ(period = 7))
+  )
+
+# View model summary
+report(sarima_auto)
+```
+
+## Forecast for test period
+
+```{r}
+h_test <- nrow(test)
+
+fc <- sarima_auto |>
+  forecast(h = h_test)
+fc
+fc |> knitr::kable()
+```

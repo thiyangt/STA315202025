@@ -54,5 +54,54 @@
     "title": "STA 315 2.0 Essential Skills in Statistics",
     "section": "Lecture 6: 12 Dec 2025",
     "text": "Lecture 6: 12 Dec 2025\nIn class “Hackathon” and “forecasting competition”\nLink"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "Help: In class Hackathon and Forecasting Vompetition",
+    "section": "",
+    "text": "library(tidyverse)\nlibrary(fable)\nlibrary(tsibble)\nlibrary(lubridate)"
+  },
+  {
+    "objectID": "about.html#packages",
+    "href": "about.html#packages",
+    "title": "Help: In class Hackathon and Forecasting Vompetition",
+    "section": "",
+    "text": "library(tidyverse)\nlibrary(fable)\nlibrary(tsibble)\nlibrary(lubridate)"
+  },
+  {
+    "objectID": "about.html#read-data",
+    "href": "about.html#read-data",
+    "title": "Help: In class Hackathon and Forecasting Vompetition",
+    "section": "Read Data",
+    "text": "Read Data\n\nlibrary(readr)\ntrain &lt;- read_csv(\"train.csv\")\n\nRows: 1035 Columns: 3\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr (1): Date\ndbl (2): ID, Value\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.\n\n#View(train)\ntrain\n\n# A tibble: 1,035 × 3\n      ID Date       Value\n   &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt;\n 1     1 01.01.2023  2246\n 2     2 02.01.2023  3633\n 3     3 03.01.2023  2982\n 4     4 04.01.2023  2694\n 5     5 05.01.2023  3512\n 6     6 06.01.2023  3035\n 7     7 07.01.2023  2773\n 8     8 08.01.2023  2912\n 9     9 09.01.2023  3806\n10    10 10.01.2023  3239\n# ℹ 1,025 more rows"
+  },
+  {
+    "objectID": "about.html#convert-data-into-tsiblle",
+    "href": "about.html#convert-data-into-tsiblle",
+    "title": "Help: In class Hackathon and Forecasting Vompetition",
+    "section": "Convert data into tsiblle",
+    "text": "Convert data into tsiblle\n\nlibrary(dplyr)\n\ntrain |&gt;\n  group_by(Date) |&gt;\n  summarise(n = n()) %&gt;%\n  filter(n &gt; 1)\n\n# A tibble: 2 × 2\n  Date           n\n  &lt;chr&gt;      &lt;int&gt;\n1 30.05.2024     2\n2 31.05.2024     2"
+  },
+  {
+    "objectID": "about.html#convert-data-into-tsible",
+    "href": "about.html#convert-data-into-tsible",
+    "title": "Help: In class Hackathon and Forecasting Vompetition",
+    "section": "Convert data into tsible",
+    "text": "Convert data into tsible\n\nlibrary(dplyr)\n\ntrain |&gt;\n  group_by(Date) |&gt;\n  summarise(n = n()) |&gt;\n  filter(n &gt; 1)\n\n# A tibble: 2 × 2\n  Date           n\n  &lt;chr&gt;      &lt;int&gt;\n1 30.05.2024     2\n2 31.05.2024     2\n\n\n\nduplicates_with_counts &lt;- train |&gt;\n  group_by(Date) |&gt;\n  filter(n() &gt; 1) |&gt;       # Keep only dates that appear more than once\n  mutate(count = n()) |&gt;   # Add a column showing how many times this date appears\n  ungroup() |&gt;\n  arrange(Date)\n\nduplicates_with_counts\n\n# A tibble: 4 × 4\n     ID Date       Value count\n  &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;\n1   516 30.05.2024  3257     2\n2   881 30.05.2024  4528     2\n3   517 31.05.2024  3463     2\n4   882 31.05.2024  4318     2\n\n\n\n# Correct the dates for rows 881 and 882\ntrain &lt;- train %&gt;%\n  mutate(Date = case_when(\n    ID == 881 ~ \"30.05.2025\",\n    ID == 882 ~ \"31.05.2025\",\n    TRUE ~ Date\n  ))\n\n\ntrain |&gt;\n  group_by(Date) |&gt;\n  filter(n() &gt; 1) |&gt;       # Keep only dates that appear more than once\n  mutate(count = n()) |&gt;   # Add a column showing how many times this date appears\n  ungroup() |&gt;\n  arrange(Date)\n\n# A tibble: 0 × 4\n# ℹ 4 variables: ID &lt;dbl&gt;, Date &lt;chr&gt;, Value &lt;dbl&gt;, count &lt;int&gt;\n\n\n\n# --- Convert to tsibble ---\ndf_ts &lt;- train |&gt;\n  mutate(Date = dmy(Date)) |&gt;        # Convert \"01.01.2023\" to Date format\n  as_tsibble(index = Date)\n\ndf_ts\n\n# A tsibble: 1,035 x 3 [1D]\n      ID Date       Value\n   &lt;dbl&gt; &lt;date&gt;     &lt;dbl&gt;\n 1     1 2023-01-01  2246\n 2     2 2023-01-02  3633\n 3     3 2023-01-03  2982\n 4     4 2023-01-04  2694\n 5     5 2023-01-05  3512\n 6     6 2023-01-06  3035\n 7     7 2023-01-07  2773\n 8     8 2023-01-08  2912\n 9     9 2023-01-09  3806\n10    10 2023-01-10  3239\n# ℹ 1,025 more rows"
+  },
+  {
+    "objectID": "about.html#split-data-to-training-and-test",
+    "href": "about.html#split-data-to-training-and-test",
+    "title": "Help: In class Hackathon and Forecasting Vompetition",
+    "section": "Split data to training and test",
+    "text": "Split data to training and test\n\n# Find the last date\nlast_day &lt;- max(df_ts$Date)\n\n# First day of the last month\nfirst_test_day &lt;- floor_date(last_day, \"month\")\n\n# Split\ntrain &lt;- df_ts %&gt;% filter(Date &lt; first_test_day)\ntest  &lt;- df_ts %&gt;% filter(Date &gt;= first_test_day)\n\nhead(train)\n\n# A tsibble: 6 x 3 [1D]\n     ID Date       Value\n  &lt;dbl&gt; &lt;date&gt;     &lt;dbl&gt;\n1     1 2023-01-01  2246\n2     2 2023-01-02  3633\n3     3 2023-01-03  2982\n4     4 2023-01-04  2694\n5     5 2023-01-05  3512\n6     6 2023-01-06  3035\n\ntail(train)\n\n# A tsibble: 6 x 3 [1D]\n     ID Date       Value\n  &lt;dbl&gt; &lt;date&gt;     &lt;dbl&gt;\n1   999 2025-09-25  4666\n2  1000 2025-09-26  5891\n3  1001 2025-09-27  6150\n4  1002 2025-09-28  5588\n5  1003 2025-09-29  4959\n6  1004 2025-09-30  5339\n\nhead(test)\n\n# A tsibble: 6 x 3 [1D]\n     ID Date       Value\n  &lt;dbl&gt; &lt;date&gt;     &lt;dbl&gt;\n1  1005 2025-10-01  6751\n2  1006 2025-10-02  6021\n3  1007 2025-10-03  6146\n4  1008 2025-10-04  5802\n5  1009 2025-10-05  4847\n6  1010 2025-10-06  4478\n\ntail(test)\n\n# A tsibble: 6 x 3 [1D]\n     ID Date       Value\n  &lt;dbl&gt; &lt;date&gt;     &lt;dbl&gt;\n1  1030 2025-10-26  5618\n2  1031 2025-10-27  4583\n3  1032 2025-10-28  5577\n4  1033 2025-10-29  5028\n5  1034 2025-10-30  5216\n6  1035 2025-10-31  6515\n\n\n\nlibrary(feasts)\ntrain |&gt;\n  autoplot(Value)\n\n\n\n\n\n\n\ntrain |&gt;\n  ACF(Value) |&gt;\n  autoplot() +\n  labs(title = \"ACF Plot of Value\")\n\n\n\n\n\n\n\ntrain |&gt;\n  PACF(Value) |&gt;\n  autoplot() +\n  labs(title = \"PACF Plot of Value\")\n\n\n\n\n\n\n\n\n\ntrain |&gt;\n  mutate(Value_diff = difference(Value)) |&gt;  # Take first difference\n  ACF(Value_diff, na_action = \"omit\") |&gt;    # Compute ACF\n  autoplot() +\n  labs(title = \"ACF Plot of Differenced Value\")\n\nWarning: The `...` argument of `PACF()` is deprecated as of feasts 0.2.2.\nℹ ACF variables should be passed to the `y` argument. If multiple variables are\n  to be used, specify them using `vars(...)`.\n\n\nWarning: ACF currently only supports one column, `Value_diff` will be used.\n\n\n\n\n\n\n\n\n\n\nforecast::findfrequency(train)\n\nRegistered S3 method overwritten by 'quantmod':\n  method            from\n  as.zoo.data.frame zoo \n\n\n[1] 7\n\n\n\nsarima_auto &lt;- train |&gt;\n  model(\n    auto = ARIMA(Value ~ pdq() + PDQ(period = 7))\n  )\n\n# View model summary\nreport(sarima_auto)\n\nSeries: Value \nModel: ARIMA(2,1,2)(0,0,2)[7] \n\nCoefficients:\n          ar1     ar2      ma1      ma2    sma1    sma2\n      -0.0570  0.3088  -0.4037  -0.4191  0.3404  0.1705\ns.e.   0.1963  0.0802   0.1981   0.1643  0.0331  0.0287\n\nsigma^2 estimated as 494379:  log likelihood=-7996.06\nAIC=16006.11   AICc=16006.22   BIC=16040.49"
+  },
+  {
+    "objectID": "about.html#forecast-for-test-period",
+    "href": "about.html#forecast-for-test-period",
+    "title": "Help: In class Hackathon and Forecasting Vompetition",
+    "section": "Forecast for test period",
+    "text": "Forecast for test period\n\nh_test &lt;- nrow(test)\n\nfc &lt;- sarima_auto |&gt;\n  forecast(h = h_test)\nfc\n\n# A fable: 31 x 4 [1D]\n# Key:     .model [1]\n   .model Date      \n   &lt;chr&gt;  &lt;date&gt;    \n 1 auto   2025-10-01\n 2 auto   2025-10-02\n 3 auto   2025-10-03\n 4 auto   2025-10-04\n 5 auto   2025-10-05\n 6 auto   2025-10-06\n 7 auto   2025-10-07\n 8 auto   2025-10-08\n 9 auto   2025-10-09\n10 auto   2025-10-10\n# ℹ 21 more rows\n# ℹ 2 more variables: Value &lt;dist&gt;, .mean &lt;dbl&gt;\n\nfc |&gt; knitr::kable()\n\n\n\n\n.model\nDate\nValue\n.mean\n\n\n\n\nauto\n2025-10-01\nN(5009, 494379)\n5009.223\n\n\nauto\n2025-10-02\nN(5094, 638210)\n5093.529\n\n\nauto\n2025-10-03\nN(5444, 740669)\n5443.752\n\n\nauto\n2025-10-04\nN(5586, 790603)\n5585.582\n\n\nauto\n2025-10-05\nN(5354, 834997)\n5354.195\n\n\nauto\n2025-10-06\nN(5178, 867971)\n5178.438\n\n\nauto\n2025-10-07\nN(5324, 9e+05)\n5324.475\n\n\nauto\n2025-10-08\nN(5218, 1068049)\n5218.398\n\n\nauto\n2025-10-09\nN(5208, 1157655)\n5207.563\n\n\nauto\n2025-10-10\nN(5407, 1234097)\n5407.331\n\n\nauto\n2025-10-11\nN(5416, 1293478)\n5415.811\n\n\nauto\n2025-10-12\nN(5397, 1350356)\n5396.533\n\n\nauto\n2025-10-13\nN(5295, 1402641)\n5294.741\n\n\nauto\n2025-10-14\nN(5313, 1454451)\n5312.829\n\n\nauto\n2025-10-15\nN(5309, 1573163)\n5308.907\n\n\nauto\n2025-10-16\nN(5315, 1656778)\n5314.855\n\n\nauto\n2025-10-17\nN(5313, 1734153)\n5313.305\n\n\nauto\n2025-10-18\nN(5315, 1802634)\n5315.230\n\n\nauto\n2025-10-19\nN(5315, 1869835)\n5314.642\n\n\nauto\n2025-10-20\nN(5315, 1934496)\n5315.270\n\n\nauto\n2025-10-21\nN(5315, 2e+06)\n5315.052\n\n\nauto\n2025-10-22\nN(5315, 2062574)\n5315.258\n\n\nauto\n2025-10-23\nN(5315, 2126202)\n5315.180\n\n\nauto\n2025-10-24\nN(5315, 2189598)\n5315.248\n\n\nauto\n2025-10-25\nN(5315, 2252998)\n5315.220\n\n\nauto\n2025-10-26\nN(5315, 2316326)\n5315.242\n\n\nauto\n2025-10-27\nN(5315, 2379659)\n5315.232\n\n\nauto\n2025-10-28\nN(5315, 2442970)\n5315.240\n\n\nauto\n2025-10-29\nN(5315, 2506284)\n5315.236\n\n\nauto\n2025-10-30\nN(5315, 2569590)\n5315.239\n\n\nauto\n2025-10-31\nN(5315, 2632898)\n5315.238"
   }
 ]
