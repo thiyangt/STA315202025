@@ -56,6 +56,13 @@
     "text": "Lecture 6: 12 Dec 2025\nIn class “Hackathon” and “forecasting competition”\nLink"
   },
   {
+    "objectID": "index.html#lecture-7-19-dec-2026",
+    "href": "index.html#lecture-7-19-dec-2026",
+    "title": "STA 315 2.0 Essential Skills in Statistics",
+    "section": "Lecture 7: 19 Dec 2026",
+    "text": "Lecture 7: 19 Dec 2026\nHypothesis Testing"
+  },
+  {
     "objectID": "about.html",
     "href": "about.html",
     "title": "Help Session: In-class Hackathon and Forecasting Competition",
@@ -75,13 +82,6 @@
     "title": "Help Session: In-class Hackathon and Forecasting Competition",
     "section": "Read Data",
     "text": "Read Data\n\nlibrary(readr)\ntrain &lt;- read_csv(\"train.csv\")\n\nRows: 1035 Columns: 3\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr (1): Date\ndbl (2): ID, Value\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.\n\n#View(train)\ntrain\n\n# A tibble: 1,035 × 3\n      ID Date       Value\n   &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt;\n 1     1 01.01.2023  2246\n 2     2 02.01.2023  3633\n 3     3 03.01.2023  2982\n 4     4 04.01.2023  2694\n 5     5 05.01.2023  3512\n 6     6 06.01.2023  3035\n 7     7 07.01.2023  2773\n 8     8 08.01.2023  2912\n 9     9 09.01.2023  3806\n10    10 10.01.2023  3239\n# ℹ 1,025 more rows"
-  },
-  {
-    "objectID": "about.html#convert-data-into-tsiblle",
-    "href": "about.html#convert-data-into-tsiblle",
-    "title": "Help: In class Hackathon and Forecasting Vompetition",
-    "section": "Convert data into tsiblle",
-    "text": "Convert data into tsiblle\n\nlibrary(dplyr)\n\ntrain |&gt;\n  group_by(Date) |&gt;\n  summarise(n = n()) %&gt;%\n  filter(n &gt; 1)\n\n# A tibble: 2 × 2\n  Date           n\n  &lt;chr&gt;      &lt;int&gt;\n1 30.05.2024     2\n2 31.05.2024     2"
   },
   {
     "objectID": "about.html#convert-data-into-tsible",
