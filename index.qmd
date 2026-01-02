@@ -33,6 +33,10 @@ In class "Hackathon" and "forecasting competition"
 
 [Link](https://www.kaggle.com/t/a65c43514c7f4bf98b587b3d81c50074)
 
-## Lecture 7: 19 Dec 2026
+## Lecture 7: 19 Dec 2025
 
 [Hypothesis Testing](https://thiyangt.github.io/EssentialSkillsInStatistics/)
+
+## Lecture 8: 2 January 2026
+
+Case study

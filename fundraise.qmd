@@ -1,0 +1,32 @@
+---
+editor: visual
+---
+
+# Case Study
+
+
+## Question 1
+
+A regulatory authority wants to evaluate the accountability of fundraisers involved in a donation program. There is evidence that some fundraisers do not fully distribute the money they collect to the intended beneficiaries. Accountability is assessed based on whether fundraisers provide proper documentation, such as:
+
+  - an official receipt for donations,
+
+  - a formal acknowledgement letter on official letterhead, and
+
+  - verifiable proof of distribution or purchase of donated items or funds.
+
+Concerns have been raised that some fundraisers fail to provide these documents. At the 5% significance level, test whether the proportion of accountable fundraisers is greater than 0.9.
+
+Describe how you would collect and organize the data to perform this hypothesis test.
+
+## Question 2
+
+A regulatory body is concerned about the unauthorized distribution of photographs containing identifiable human faces on social media platforms. Such posts may violate privacy and consent guidelines. An audit is conducted to assess compliance among social media pages associated with organizations and individuals.
+
+For each social media post, the following information is recorded:
+
+Whether the post contains an identifiable face (Yes / No)
+
+Whether the post has documented consent (Yes / No)
+
+Test whether there is an association between containing identifiable faces and having documented consent.

@@ -56,11 +56,18 @@
     "text": "Lecture 6: 12 Dec 2025\nIn class “Hackathon” and “forecasting competition”\nLink"
   },
   {
-    "objectID": "index.html#lecture-7-19-dec-2026",
-    "href": "index.html#lecture-7-19-dec-2026",
+    "objectID": "index.html#lecture-7-19-dec-2025",
+    "href": "index.html#lecture-7-19-dec-2025",
     "title": "STA 315 2.0 Essential Skills in Statistics",
-    "section": "Lecture 7: 19 Dec 2026",
-    "text": "Lecture 7: 19 Dec 2026\nHypothesis Testing"
+    "section": "Lecture 7: 19 Dec 2025",
+    "text": "Lecture 7: 19 Dec 2025\nHypothesis Testing"
+  },
+  {
+    "objectID": "index.html#lecture-8-2-january-2026",
+    "href": "index.html#lecture-8-2-january-2026",
+    "title": "STA 315 2.0 Essential Skills in Statistics",
+    "section": "Lecture 8: 2 January 2026",
+    "text": "Lecture 8: 2 January 2026\nCase study"
   },
   {
     "objectID": "about.html",
@@ -103,5 +110,26 @@
     "title": "Help Session: In-class Hackathon and Forecasting Competition",
     "section": "Forecast for test period",
     "text": "Forecast for test period\n\nh_test &lt;- nrow(test)\n\nfc &lt;- sarima_auto |&gt;\n  forecast(h = h_test)\nfc\n\n# A fable: 31 x 4 [1D]\n# Key:     .model [1]\n   .model Date      \n   &lt;chr&gt;  &lt;date&gt;    \n 1 auto   2025-10-01\n 2 auto   2025-10-02\n 3 auto   2025-10-03\n 4 auto   2025-10-04\n 5 auto   2025-10-05\n 6 auto   2025-10-06\n 7 auto   2025-10-07\n 8 auto   2025-10-08\n 9 auto   2025-10-09\n10 auto   2025-10-10\n# ℹ 21 more rows\n# ℹ 2 more variables: Value &lt;dist&gt;, .mean &lt;dbl&gt;\n\nfc |&gt; knitr::kable()\n\n\n\n\n.model\nDate\nValue\n.mean\n\n\n\n\nauto\n2025-10-01\nN(5009, 494379)\n5009.223\n\n\nauto\n2025-10-02\nN(5094, 638210)\n5093.529\n\n\nauto\n2025-10-03\nN(5444, 740669)\n5443.752\n\n\nauto\n2025-10-04\nN(5586, 790603)\n5585.582\n\n\nauto\n2025-10-05\nN(5354, 834997)\n5354.195\n\n\nauto\n2025-10-06\nN(5178, 867971)\n5178.438\n\n\nauto\n2025-10-07\nN(5324, 9e+05)\n5324.475\n\n\nauto\n2025-10-08\nN(5218, 1068049)\n5218.398\n\n\nauto\n2025-10-09\nN(5208, 1157655)\n5207.563\n\n\nauto\n2025-10-10\nN(5407, 1234097)\n5407.331\n\n\nauto\n2025-10-11\nN(5416, 1293478)\n5415.811\n\n\nauto\n2025-10-12\nN(5397, 1350356)\n5396.533\n\n\nauto\n2025-10-13\nN(5295, 1402641)\n5294.741\n\n\nauto\n2025-10-14\nN(5313, 1454451)\n5312.829\n\n\nauto\n2025-10-15\nN(5309, 1573163)\n5308.907\n\n\nauto\n2025-10-16\nN(5315, 1656778)\n5314.855\n\n\nauto\n2025-10-17\nN(5313, 1734153)\n5313.305\n\n\nauto\n2025-10-18\nN(5315, 1802634)\n5315.230\n\n\nauto\n2025-10-19\nN(5315, 1869835)\n5314.642\n\n\nauto\n2025-10-20\nN(5315, 1934496)\n5315.270\n\n\nauto\n2025-10-21\nN(5315, 2e+06)\n5315.052\n\n\nauto\n2025-10-22\nN(5315, 2062574)\n5315.258\n\n\nauto\n2025-10-23\nN(5315, 2126202)\n5315.180\n\n\nauto\n2025-10-24\nN(5315, 2189598)\n5315.248\n\n\nauto\n2025-10-25\nN(5315, 2252998)\n5315.220\n\n\nauto\n2025-10-26\nN(5315, 2316326)\n5315.242\n\n\nauto\n2025-10-27\nN(5315, 2379659)\n5315.232\n\n\nauto\n2025-10-28\nN(5315, 2442970)\n5315.240\n\n\nauto\n2025-10-29\nN(5315, 2506284)\n5315.236\n\n\nauto\n2025-10-30\nN(5315, 2569590)\n5315.239\n\n\nauto\n2025-10-31\nN(5315, 2632898)\n5315.238"
+  },
+  {
+    "objectID": "fundraise.html",
+    "href": "fundraise.html",
+    "title": "Case Study",
+    "section": "",
+    "text": "A regulatory authority wants to evaluate the accountability of fundraisers involved in a donation program. There is evidence that some fundraisers do not fully distribute the money they collect to the intended beneficiaries. Accountability is assessed based on whether fundraisers provide proper documentation, such as:\n\nan official receipt for donations,\na formal acknowledgement letter on official letterhead, and\nverifiable proof of distribution or purchase of donated items or funds.\n\nConcerns have been raised that some fundraisers fail to provide these documents. At the 5% significance level, test whether the proportion of accountable fundraisers is greater than 0.9.\nDescribe how you would collect and organize the data to perform this hypothesis test.\n\n\n\nA regulatory body is concerned about the unauthorized distribution of photographs containing identifiable human faces on social media platforms. Such posts may violate privacy and consent guidelines. An audit is conducted to assess compliance among social media pages associated with organizations and individuals.\nFor each social media post, the following information is recorded:\nWhether the post contains an identifiable face (Yes / No)\nWhether the post has documented consent (Yes / No)\nTest whether there is an association between containing identifiable faces and having documented consent."
+  },
+  {
+    "objectID": "fundraise.html#question-1",
+    "href": "fundraise.html#question-1",
+    "title": "Case Study",
+    "section": "",
+    "text": "A regulatory authority wants to evaluate the accountability of fundraisers involved in a donation program. There is evidence that some fundraisers do not fully distribute the money they collect to the intended beneficiaries. Accountability is assessed based on whether fundraisers provide proper documentation, such as:\n\nan official receipt for donations,\na formal acknowledgement letter on official letterhead, and\nverifiable proof of distribution or purchase of donated items or funds.\n\nConcerns have been raised that some fundraisers fail to provide these documents. At the 5% significance level, test whether the proportion of accountable fundraisers is greater than 0.9.\nDescribe how you would collect and organize the data to perform this hypothesis test."
+  },
+  {
+    "objectID": "fundraise.html#question-2",
+    "href": "fundraise.html#question-2",
+    "title": "Case Study",
+    "section": "",
+    "text": "A regulatory body is concerned about the unauthorized distribution of photographs containing identifiable human faces on social media platforms. Such posts may violate privacy and consent guidelines. An audit is conducted to assess compliance among social media pages associated with organizations and individuals.\nFor each social media post, the following information is recorded:\nWhether the post contains an identifiable face (Yes / No)\nWhether the post has documented consent (Yes / No)\nTest whether there is an association between containing identifiable faces and having documented consent."
   }
 ]
