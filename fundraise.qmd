@@ -2,8 +2,9 @@
 editor: visual
 ---
 
-# Case Study
+# Case Study: accountability of fundraisers
 
+## Date: 2 January 2026
 
 ## Question 1
 
@@ -30,3 +31,5 @@ Whether the post contains an identifiable face (Yes / No)
 Whether the post has documented consent (Yes / No)
 
 Test whether there is an association between containing identifiable faces and having documented consent.
+
+Describe how you would collect and organize the data to perform this hypothesis test.
