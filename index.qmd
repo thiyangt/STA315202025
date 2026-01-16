@@ -35,8 +35,19 @@ In class "Hackathon" and "forecasting competition"
 
 ## Lecture 7: 19 Dec 2025
 
-[Hypothesis Testing](https://thiyangt.github.io/EssentialSkillsInStatistics/)
+[Hypothesis Testing](https://thiyangt.github.io/EssentialSkillsInStatistics/Week9/#/title-slide)
 
 ## Lecture 8: 2 January 2026
 
 Case study: Accountability of fundraisers
+
+## Lecture 9: 9 January 2026
+
+Mid-Semester Examination
+
+## Lecture 10: 16 January 2026
+
+
+[Regression Analysis](https://thiyangt.github.io/EssentialSkillsInStatistics/Week9/#/title-slide)
+
+[Regression Analysis](https://thiyangt.github.io/EssentialSkillsInStatistics/Week7/2024_ES.pdf)
