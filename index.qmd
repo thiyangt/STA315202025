@@ -51,3 +51,7 @@ Mid-Semester Examination
 [Regression Analysis](https://thiyangt.github.io/EssentialSkillsInStatistics/Week9/#/title-slide)
 
 [Regression Analysis](https://thiyangt.github.io/EssentialSkillsInStatistics/Week7/2024_ES.pdf)
+
+## Lecture 11: 23 January 2026
+
+[Design and Analysis of Experiments](https://thiyanga-doe.netlify.app/)
