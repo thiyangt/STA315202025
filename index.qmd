@@ -55,3 +55,7 @@ Mid-Semester Examination
 ## Lecture 11: 23 January 2026
 
 [Design and Analysis of Experiments](https://thiyanga-doe.netlify.app/)
+
+## Lecture 12: 30 January 2025
+
+[Emerging Trends and Technologies in Statistics and Data Science](https://thiyangt.github.io/EssentialSkillsInStatistics/Week13/#/title-slide)
