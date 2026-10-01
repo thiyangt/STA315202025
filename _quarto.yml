@@ -6,10 +6,11 @@ website:
   title: "STA 315 2.0 Essential Skills in Statistics"
   navbar:
     left:
-      - href: index.qmd
+      - href: index26.qmd
         text: Home
       - about.qmd
       - fundraise.qmd
+      - index.qmd
 
 format:
   html:
