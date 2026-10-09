@@ -9,3 +9,6 @@ Class code was shared during the first lecture.
 
 [Slides](https://thiyangt.github.io/ES1/#/title-slide)
 
+## Lecture 2: 9 Oct 2025
+
+[Slides](https://thiyangt.github.io/EssentialSkillsInStatistics/Week2/#/title-slide)
