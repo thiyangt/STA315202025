@@ -12,3 +12,16 @@ Class code was shared during the first lecture.
 ## Lecture 2: 9 Oct 2026
 
 [Slides](https://thiyangt.github.io/EssentialSkillsInStatistics/Week2/#/title-slide)
+
+## Lecture 3: 16 Oct 2026
+
+Cont. from Lecture 2
+
+Demonstrating the statistical concepts using computer simulations
+
+```r
+install.packages("pak")
+pak::pak("thiyangt/statshinyapps")
+run_die_app()
+run_clt_app()
+```
