@@ -28,6 +28,13 @@
     "text": "Lecture 3: 16 Oct 2026\nCont. from Lecture 2\nDemonstrating the statistical concepts using computer simulations\ninstall.packages(\"pak\")\npak::pak(\"thiyangt/statshinyapps\")\nrun_die_app()\nrun_clt_app()"
   },
   {
+    "objectID": "index26.html#lecture-4-23-oct-2026",
+    "href": "index26.html#lecture-4-23-oct-2026",
+    "title": "STA 315 2.0 Essential Skills in Statistics",
+    "section": "Lecture 4: 23 Oct 2026",
+    "text": "Lecture 4: 23 Oct 2026\nHypothesis Testing\ninstall.packages(\"pak\")\npak::pak(\"thiyangt/statshinyapps\")\nrun_hypothesis_app()\nrun_significance_app()\nHypothesis Testing"
+  },
+  {
     "objectID": "fundraise.html",
     "href": "fundraise.html",
     "title": "Case Study: accountability of fundraisers",

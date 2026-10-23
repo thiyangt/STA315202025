@@ -25,3 +25,16 @@ pak::pak("thiyangt/statshinyapps")
 run_die_app()
 run_clt_app()
 ```
+
+## Lecture 4: 23 Oct 2026
+
+Hypothesis Testing
+
+```r
+install.packages("pak")
+pak::pak("thiyangt/statshinyapps")
+run_hypothesis_app()
+run_significance_app()
+```
+
+[Hypothesis Testing](https://thiyangt.github.io/EssentialSkillsInStatistics/Week9/#/title-slide)
