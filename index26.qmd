@@ -22,6 +22,7 @@ Demonstrating the statistical concepts using computer simulations
 ```r
 install.packages("pak")
 pak::pak("thiyangt/statshinyapps")
+library(statshinyapps)
 run_die_app()
 run_clt_app()
 ```
@@ -33,8 +34,9 @@ Hypothesis Testing
 ```r
 install.packages("pak")
 pak::pak("thiyangt/statshinyapps")
+library(statshinyapps)
 run_hypothesis_app()
-run_significance_app()
+run_significance_app
 ```
 
 [Hypothesis Testing](https://thiyangt.github.io/EssentialSkillsInStatistics/Week9/#/title-slide)
