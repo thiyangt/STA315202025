@@ -40,3 +40,29 @@ run_significance_app
 ```
 
 [Hypothesis Testing](https://thiyangt.github.io/EssentialSkillsInStatistics/Week9/#/title-slide)
+
+## Lecture 5: 6 Nov 2026
+
+Explanation of answers to students' questions in the Google form.
+
+> There are many parametric and non-parametric tests we learned but there is a problem in identifying which test should be applied, and assumptions to be checked. Madam, can you please clarify how to distinguish between these tests?"
+
+> pivotal quantity
+ wald statistics
+what time we use parametric and when we use non para when the no of population changes, we have different tests summary and more theoretical knowledge
+
+>  Before the lecture, I thought I understood Type I, type II and power including their definitions. However after the lecture I gained a clearer understanding of the theory behind these concepts and how they are related. The graphical illustrations helped us visualize and understand them more effectively.
+
+> 1)And why dont we say H1 is true in general ?
+  H0 is false = H0 is not true but we dont usually say H is accepted or True right?
+  So it seems to me decision is in terms H0
+  But conclusion is in terms of H1
+
+> 2)What is the foundation of the decision rule
+
+
+## Lecture 6: 13 Nov 2026
+
+[Time Series Analysis](https://thiyangt.github.io/EssentialSkillsInStatistics/Week4/#/title-slide)
+
+## Mid Semester Examination: 18 Nov 2026
