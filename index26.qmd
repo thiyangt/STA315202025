@@ -65,4 +65,6 @@ what time we use parametric and when we use non para when the no of population c
 
 [Time Series Analysis](https://thiyangt.github.io/EssentialSkillsInStatistics/Week4/#/title-slide)
 
+[Chapter 2 and Chapter 3](https://thiyangt.github.io/DSA5543.025/03-chap3.html)
+
 ## Mid Semester Examination: 18 Dec 2026
