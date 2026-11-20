@@ -1,0 +1,321 @@
+---
+title: "Time Series Forecasting"
+subtitle: "ARMA Modelling and Forecast Accuracy"
+editor: visual
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: false
+    code-fold: false
+---
+
+
+
+# 1. Load packages
+
+```{r, warning=FALSE, message=FALSE}
+library(tsibble)
+library(dplyr)
+library(ggplot2)
+library(feasts)
+library(fable)
+library(fabletools)
+library(tidyr)
+```
+
+# 2. Set seed
+
+```{r}
+set.seed(123)
+```
+
+# 3. Define ARMA parameters
+
+We consider an ARMA(2,1) process:
+
+$$
+Y_t = c + \phi_1Y_{t-1}+\phi_2Y_{t-2}
++\varepsilon_t+\theta_1\varepsilon_{t-1}
+$$
+
+```{r}
+n <- 300
+
+phi1 <- 0.6
+phi2 <- -0.2
+theta1 <- 0.5
+
+intercept <- 2
+sigma <- 1
+
+# Unconditional mean
+mu <- intercept / (1 - phi1 - phi2)
+
+mu
+```
+
+# 4. Simulate ARMA(2,1)
+
+```{r}
+y <- arima.sim(
+  model = list(
+    ar = c(phi1, phi2),
+    ma = theta1
+  ),
+  n = n,
+  sd = sigma
+) + mu
+```
+
+# 5. Convert to tsibble
+
+```{r}
+data <- tibble(
+  Time = 1:n,
+  Y = as.numeric(y)
+) |>
+  as_tsibble(index = Time)
+
+# Examine data
+data
+
+# First six observations
+head(data)
+
+# Summary
+summary(data)
+```
+
+# 6. Visualise the time series
+
+```{r}
+data |>
+  autoplot(Y) +
+  labs(
+    title = "Simulated ARMA(2,1) Time Series",
+    x = "Time",
+    y = expression(Y[t])
+  ) +
+  theme_minimal()
+```
+
+
+
+# 7. Split data into training and test sets
+
+We use the first 250 observations for model estimation and the remaining 50 observations for evaluating forecast accuracy.
+
+```{r}
+train <- data |>
+  filter(Time <= 250)
+
+test <- data |>
+  filter(Time > 250)
+
+# Number of observations
+nrow(train)
+nrow(test)
+```
+
+Visualise the training and test sets.
+
+```{r}
+ggplot() +
+  geom_line(
+    data = train,
+    aes(x = Time, y = Y, colour = "Training")
+  ) +
+  geom_line(
+    data = test,
+    aes(x = Time, y = Y, colour = "Test")
+  ) +
+  labs(
+    title = "Training and Test Data",
+    x = "Time",
+    y = expression(Y[t]),
+    colour = "Data"
+  ) +
+  theme_minimal()
+```
+
+# 8. Examine ACF
+
+```{r}
+train |>
+  ACF(Y) |>
+  autoplot() +
+  labs(
+    title = "Autocorrelation Function (ACF)"
+  ) +
+  theme_minimal()
+```
+
+# 9. Examine PACF
+
+```{r}
+train |>
+  PACF(Y) |>
+  autoplot() +
+  labs(
+    title = "Partial Autocorrelation Function (PACF)"
+  ) +
+  theme_minimal()
+```
+
+# 10. Fit several ARMA models using fable
+
+We fit the following models:
+
+- AR(1)
+- AR(2)
+- MA(1)
+- ARMA(1,1)
+- ARMA(2,1)
+- ARMA(2,2)
+
+```{r}
+fit_arma <- train |>
+  model(
+    AR1 = ARIMA(Y ~ pdq(1, 0, 0)),
+    AR2 = ARIMA(Y ~ pdq(2, 0, 0)),
+    MA1 = ARIMA(Y ~ pdq(0, 0, 1)),
+    ARMA11 = ARIMA(Y ~ pdq(1, 0, 1)),
+    ARMA21 = ARIMA(Y ~ pdq(2, 0, 1)),
+    ARMA22 = ARIMA(Y ~ pdq(2, 0, 2))
+  )
+```
+
+# 11. Model summaries
+
+```{r}
+report(fit_arma)
+```
+
+# 12. Extract estimated coefficients
+
+```{r}
+tidy(fit_arma)
+```
+
+# 13. Extract fitted values and residuals
+
+```{r}
+augment(fit_arma)
+```
+
+# 14. Residual diagnostics for ARMA(2,1)
+
+The `gg_tsresiduals()` function requires a mable containing only one model. Therefore, we fit the ARMA(2,1) model separately for residual diagnostics.
+
+```{r}
+fit_arma21 <- train |>
+  model(
+    ARMA21 = ARIMA(Y ~ pdq(2, 0, 1))
+  )
+
+# Residual diagnostic plots
+fit_arma21 |>
+  gg_tsresiduals()
+```
+
+# 15. Ljung-Box test
+
+The Ljung-Box test examines whether the model residuals exhibit significant autocorrelation.
+
+```{r}
+augment(fit_arma21) |>
+  features(
+    .innov,
+    ljung_box,
+    lag = 20,
+    dof = 3
+  )
+```
+
+**Interpretation:**
+
+- Null hypothesis: The residuals are independently distributed (no autocorrelation up to the specified lag).
+- Alternative hypothesis: The residuals exhibit autocorrelation.
+- A p-value greater than 0.05 indicates insufficient evidence to reject the null hypothesis.
+
+# 16. Generate forecasts for the test period
+
+We generate 50-step-ahead forecasts from all six models.
+
+```{r}
+fc <- fit_arma |>
+  forecast(h = nrow(test))
+```
+
+# 17. Forecast table
+
+```{r}
+fc
+```
+
+# 18. Forecast plots
+
+```{r}
+fc |>
+  autoplot(train, level = 95) +
+  autolayer(
+    test,
+    Y,
+    colour = "black"
+  ) +
+  labs(
+    title = "Forecasts from Different ARMA Models",
+    x = "Time",
+    y = expression(Y[t]),
+    colour = "Model"
+  ) +
+  theme_minimal()
+```
+
+# 19. Compare actual and fitted values
+
+We illustrate the fitted values for the ARMA(2,1) model.
+
+```{r}
+fitted_data <- augment(fit_arma21)
+
+ggplot(fitted_data, aes(x = Time)) +
+  geom_line(aes(y = Y, colour = "Actual")) +
+  geom_line(aes(y = .fitted, colour = "Fitted")) +
+  labs(
+    title = "Actual versus Fitted Values: ARMA(2,1)",
+    x = "Time",
+    y = expression(Y[t]),
+    colour = "Series"
+  ) +
+  theme_minimal()
+```
+
+# 20. Forecast accuracy using fable
+
+The `accuracy()` function from `fabletools` calculates forecast accuracy by comparing forecasts with actual observations in the test set.
+
+```{r}
+accuracy_results <- accuracy(
+  fc,
+  test
+)
+
+accuracy_results
+```
+
+## Interpretation of accuracy measures
+
+| Measure | Description | Preferred value |
+|---|---|---|
+| ME | Mean Error | Close to 0 |
+| RMSE | Root Mean Squared Error | Lower |
+| MAE | Mean Absolute Error | Lower |
+| MPE | Mean Percentage Error | Close to 0 |
+| MAPE | Mean Absolute Percentage Error | Lower |
+| MASE | Mean Absolute Scaled Error | Lower |
+| RMSSE | Root Mean Squared Scaled Error | Lower |
+| ACF1 | Lag-1 autocorrelation of forecast errors | Close to 0 |
+
+**Note
