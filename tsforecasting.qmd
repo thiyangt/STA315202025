@@ -10,6 +10,7 @@ format:
     code-fold: false
 ---
 
+> The code is explained using R. However, the lecturer has explained the underlying concepts and calculations in detail. Therefore, you are expected to understand the methods and perform the calculations using any software you are comfortable with. You are not required to use R specifically.
 
 
 # 1. Load packages
@@ -108,10 +109,10 @@ We use the first 250 observations for model estimation and the remaining 50 obse
 
 ```{r}
 train <- data |>
-  filter(Time <= 250)
+  filter(Time <= 290)
 
 test <- data |>
-  filter(Time > 250)
+  filter(Time > 290)
 
 # Number of observations
 nrow(train)
@@ -150,6 +151,151 @@ train |>
   ) +
   theme_minimal()
 ```
+
+```{r}
+library(tseries)
+x <- train$Y
+# Augmented Dickey-Fuller test
+adf.test(x)
+
+# KPSS test for level stationarity
+kpss.test(x, null = "Level")
+
+# KPSS test for trend stationarity
+kpss.test(x, null = "Trend")
+```
+
+```{r}
+library(urca)
+
+# ADF with intercept
+adf_level <- ur.df(x, type = "drift",
+                   selectlags = "AIC")
+
+summary(adf_level)
+
+# ADF with intercept and trend
+adf_trend <- ur.df(x, type = "trend",
+                   selectlags = "AIC")
+
+summary(adf_trend)
+```
+
+## Testing for Stationarity
+
+Stationarity is an important assumption in time-series modelling. A weakly stationary time series has a constant mean and variance over time, and its autocovariance depends only on the time lag.
+
+We use the Augmented Dickey–Fuller (ADF) and Kwiatkowski–Phillips–Schmidt–Shin (KPSS) tests to investigate whether a time series is stationary. These tests have different null hypotheses and therefore provide complementary evidence.
+
+**1. Augmented Dickey–Fuller (ADF) test**
+The ADF test examines whether a time series contains a unit root. The null hypothesis is that the series is non-stationary due to the presence of a unit root.
+
+The test can be conducted under different deterministic specifications.
+
+**ADF test with an intercept (drift)**
+
+This specification allows the series to have a non-zero constant mean under the stationary alternative.
+
+Hypotheses:
+$$
+H_0: \text{The series has a unit root (non-stationary).}
+$$
+
+$$
+H_1: \text{The series is stationary around a constant mean.}
+$$
+
+**ADF test with an intercept and a linear trend**
+
+This specification allows for a deterministic linear trend in the series.
+
+Hypotheses:
+$$
+H_0: \text{The series has a unit root (non-stationary).}
+$$
+
+$$
+H_1: \text{The series is trend stationary.}
+$$
+
+The ADF test is based on the estimated coefficient of the lagged level of the series. 
+
+2. Kwiatkowski–Phillips–Schmidt–Shin (KPSS) test
+Unlike the ADF test, the KPSS test takes stationarity as its null hypothesis. It investigates whether the series is stationary around a specified deterministic component.
+
+KPSS test for level stationarity
+
+Hypotheses:
+$$
+H_0: \text{The series is stationary around a constant level.}
+$$
+
+$$
+H_1: \text{The series is non-stationary.}
+$$
+
+KPSS test for trend stationarity
+
+Hypotheses:
+$$
+H_0: \text{The series is stationary around a deterministic linear trend.}
+$$
+
+$$
+H_1: \text{The series is non-stationary.}
+$$
+
+
+The  `tidyverts` framework provides a convenient way to conduct stationarity analysis within a tidy time-series workflow.
+
+1. KPSS test using features()
+The unitroot_kpss() function performs the KPSS test.
+
+The hypotheses depend on the selected deterministic component.
+
+Level stationarity
+
+$$
+H_0: Y_t \text{ is stationary around a constant level}
+$$
+
+$$
+H_1: Y_t \text{ is non-stationary}
+$$
+
+Trend stationarity
+
+$$
+H_0: Y_t \text{ is stationary around a deterministic trend}
+$$
+
+$$
+H_1: Y_t \text{ is non-stationary}
+$$
+
+The type argument specifies the deterministic component:
+
+- type = "mu": Level stationarity.
+
+- type = "tau": Trend stationarity.
+
+Example using a tsibble named train with a response variable named value:
+
+```{r}
+library(tsibble)
+library(feasts)
+library(dplyr)
+
+# KPSS test for level stationarity
+train |>
+  features(Y, unitroot_kpss, type = "mu")
+
+# KPSS test for trend stationarity
+train |>
+  features(Y, unitroot_kpss, type = "tau")
+
+```
+
 
 # 9. Examine PACF
 

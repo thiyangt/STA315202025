@@ -195,7 +195,10 @@ window.Quarto = {
   <li><a href="#convert-to-tsibble" id="toc-convert-to-tsibble" class="nav-link" data-scroll-target="#convert-to-tsibble">5. Convert to tsibble</a></li>
   <li><a href="#visualise-the-time-series" id="toc-visualise-the-time-series" class="nav-link" data-scroll-target="#visualise-the-time-series">6. Visualise the time series</a></li>
   <li><a href="#split-data-into-training-and-test-sets" id="toc-split-data-into-training-and-test-sets" class="nav-link" data-scroll-target="#split-data-into-training-and-test-sets">7. Split data into training and test sets</a></li>
-  <li><a href="#examine-acf" id="toc-examine-acf" class="nav-link" data-scroll-target="#examine-acf">8. Examine ACF</a></li>
+  <li><a href="#examine-acf" id="toc-examine-acf" class="nav-link" data-scroll-target="#examine-acf">8. Examine ACF</a>
+  <ul class="collapse">
+  <li><a href="#testing-for-stationarity" id="toc-testing-for-stationarity" class="nav-link" data-scroll-target="#testing-for-stationarity">Testing for Stationarity</a></li>
+  </ul></li>
   <li><a href="#examine-pacf" id="toc-examine-pacf" class="nav-link" data-scroll-target="#examine-pacf">9. Examine PACF</a></li>
   <li><a href="#fit-several-arma-models-using-fable" id="toc-fit-several-arma-models-using-fable" class="nav-link" data-scroll-target="#fit-several-arma-models-using-fable">10. Fit several ARMA models using fable</a></li>
   <li><a href="#model-summaries" id="toc-model-summaries" class="nav-link" data-scroll-target="#model-summaries">11. Model summaries</a></li>
@@ -237,6 +240,9 @@ window.Quarto = {
 </header>
 
 
+<blockquote class="blockquote">
+<p>The code is explained using R. However, the lecturer has explained the underlying concepts and calculations in detail. Therefore, you are expected to understand the methods and perform the calculations using any software you are comfortable with. You are not required to use R specifically.</p>
+</blockquote>
 <section id="load-packages" class="level1">
 <h1>1. Load packages</h1>
 <div class="cell">
@@ -372,19 +378,19 @@ Y_t = c + \phi_1Y_{t-1}+\phi_2Y_{t-2}
 <p>We use the first 250 observations for model estimation and the remaining 50 observations for evaluating forecast accuracy.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Time <span class="sc">&lt;=</span> <span class="dv">250</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Time <span class="sc">&lt;=</span> <span class="dv">290</span>)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Time <span class="sc">&gt;</span> <span class="dv">250</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Time <span class="sc">&gt;</span> <span class="dv">290</span>)</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of observations</span></span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(train)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 250</code></pre>
+<pre><code>[1] 290</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(test)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 50</code></pre>
+<pre><code>[1] 10</code></pre>
 </div>
 </div>
 <p>Visualise the training and test sets.</p>
@@ -432,21 +438,245 @@ Y_t = c + \phi_1Y_{t-1}+\phi_2Y_{t-2}
 </div>
 </div>
 </div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tseries)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Registered S3 method overwritten by 'quantmod':
+  method            from
+  as.zoo.data.frame zoo </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> train<span class="sc">$</span>Y</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Augmented Dickey-Fuller test</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">adf.test</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in adf.test(x): p-value smaller than printed p-value</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Augmented Dickey-Fuller Test
+
+data:  x
+Dickey-Fuller = -5.279, Lag order = 6, p-value = 0.01
+alternative hypothesis: stationary</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># KPSS test for level stationarity</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kpss.test</span>(x, <span class="at">null =</span> <span class="st">"Level"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in kpss.test(x, null = "Level"): p-value greater than printed p-value</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    KPSS Test for Level Stationarity
+
+data:  x
+KPSS Level = 0.17255, Truncation lag parameter = 5, p-value = 0.1</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># KPSS test for trend stationarity</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kpss.test</span>(x, <span class="at">null =</span> <span class="st">"Trend"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in kpss.test(x, null = "Trend"): p-value greater than printed p-value</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    KPSS Test for Trend Stationarity
+
+data:  x
+KPSS Trend = 0.095287, Truncation lag parameter = 5, p-value = 0.1</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(urca)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ADF with intercept</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>adf_level <span class="ot">&lt;-</span> <span class="fu">ur.df</span>(x, <span class="at">type =</span> <span class="st">"drift"</span>,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">selectlags =</span> <span class="st">"AIC"</span>)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(adf_level)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+############################################### 
+# Augmented Dickey-Fuller Test Unit Root Test # 
+############################################### 
+
+Test regression drift 
+
+
+Call:
+lm(formula = z.diff ~ z.lag.1 + 1 + z.diff.lag)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.4607 -0.6186 -0.0460  0.5917  3.2397 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  1.82053    0.16223  11.222   &lt;2e-16 ***
+z.lag.1     -0.53589    0.04458 -12.022   &lt;2e-16 ***
+z.diff.lag   0.46848    0.05222   8.972   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.9773 on 285 degrees of freedom
+Multiple R-squared:  0.3634,    Adjusted R-squared:  0.359 
+F-statistic: 81.36 on 2 and 285 DF,  p-value: &lt; 2.2e-16
+
+
+Value of test-statistic is: -12.0218 72.2634 
+
+Critical values for test statistics: 
+      1pct  5pct 10pct
+tau2 -3.44 -2.87 -2.57
+phi1  6.47  4.61  3.79</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ADF with intercept and trend</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>adf_trend <span class="ot">&lt;-</span> <span class="fu">ur.df</span>(x, <span class="at">type =</span> <span class="st">"trend"</span>,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">selectlags =</span> <span class="st">"AIC"</span>)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(adf_trend)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+############################################### 
+# Augmented Dickey-Fuller Test Unit Root Test # 
+############################################### 
+
+Test regression trend 
+
+
+Call:
+lm(formula = z.diff ~ z.lag.1 + 1 + tt + z.diff.lag)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.3715 -0.6446 -0.0618  0.5731  3.2269 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  1.7096305  0.1838498   9.299   &lt;2e-16 ***
+z.lag.1     -0.5412611  0.0447252 -12.102   &lt;2e-16 ***
+tt           0.0008878  0.0006951   1.277    0.203    
+z.diff.lag   0.4705468  0.0521854   9.017   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.9763 on 284 degrees of freedom
+Multiple R-squared:  0.3671,    Adjusted R-squared:  0.3604 
+F-statistic:  54.9 on 3 and 284 DF,  p-value: &lt; 2.2e-16
+
+
+Value of test-statistic is: -12.1019 48.8261 73.238 
+
+Critical values for test statistics: 
+      1pct  5pct 10pct
+tau3 -3.98 -3.42 -3.13
+phi2  6.15  4.71  4.05
+phi3  8.34  6.30  5.36</code></pre>
+</div>
+</div>
+<section id="testing-for-stationarity" class="level2">
+<h2 class="anchored" data-anchor-id="testing-for-stationarity">Testing for Stationarity</h2>
+<p>Stationarity is an important assumption in time-series modelling. A weakly stationary time series has a constant mean and variance over time, and its autocovariance depends only on the time lag.</p>
+<p>We use the Augmented Dickey–Fuller (ADF) and Kwiatkowski–Phillips–Schmidt–Shin (KPSS) tests to investigate whether a time series is stationary. These tests have different null hypotheses and therefore provide complementary evidence.</p>
+<p><strong>1. Augmented Dickey–Fuller (ADF) test</strong> The ADF test examines whether a time series contains a unit root. The null hypothesis is that the series is non-stationary due to the presence of a unit root.</p>
+<p>The test can be conducted under different deterministic specifications.</p>
+<p><strong>ADF test with an intercept (drift)</strong></p>
+<p>This specification allows the series to have a non-zero constant mean under the stationary alternative.</p>
+<p>Hypotheses: <span class="math display">\[
+H_0: \text{The series has a unit root (non-stationary).}
+\]</span></p>
+<p><span class="math display">\[
+H_1: \text{The series is stationary around a constant mean.}
+\]</span></p>
+<p><strong>ADF test with an intercept and a linear trend</strong></p>
+<p>This specification allows for a deterministic linear trend in the series.</p>
+<p>Hypotheses: <span class="math display">\[
+H_0: \text{The series has a unit root (non-stationary).}
+\]</span></p>
+<p><span class="math display">\[
+H_1: \text{The series is trend stationary.}
+\]</span></p>
+<p>The ADF test is based on the estimated coefficient of the lagged level of the series.</p>
+<ol start="2" type="1">
+<li>Kwiatkowski–Phillips–Schmidt–Shin (KPSS) test Unlike the ADF test, the KPSS test takes stationarity as its null hypothesis. It investigates whether the series is stationary around a specified deterministic component.</li>
+</ol>
+<p>KPSS test for level stationarity</p>
+<p>Hypotheses: <span class="math display">\[
+H_0: \text{The series is stationary around a constant level.}
+\]</span></p>
+<p><span class="math display">\[
+H_1: \text{The series is non-stationary.}
+\]</span></p>
+<p>KPSS test for trend stationarity</p>
+<p>Hypotheses: <span class="math display">\[
+H_0: \text{The series is stationary around a deterministic linear trend.}
+\]</span></p>
+<p><span class="math display">\[
+H_1: \text{The series is non-stationary.}
+\]</span></p>
+<p>The <code>tidyverts</code> framework provides a convenient way to conduct stationarity analysis within a tidy time-series workflow.</p>
+<ol type="1">
+<li>KPSS test using features() The unitroot_kpss() function performs the KPSS test.</li>
+</ol>
+<p>The hypotheses depend on the selected deterministic component.</p>
+<p>Level stationarity</p>
+<p><span class="math display">\[
+H_0: Y_t \text{ is stationary around a constant level}
+\]</span></p>
+<p><span class="math display">\[
+H_1: Y_t \text{ is non-stationary}
+\]</span></p>
+<p>Trend stationarity</p>
+<p><span class="math display">\[
+H_0: Y_t \text{ is stationary around a deterministic trend}
+\]</span></p>
+<p><span class="math display">\[
+H_1: Y_t \text{ is non-stationary}
+\]</span></p>
+<p>The type argument specifies the deterministic component:</p>
+<ul>
+<li><p>type = “mu”: Level stationarity.</p></li>
+<li><p>type = “tau”: Trend stationarity.</p></li>
+</ul>
+<p>Example using a tsibble named train with a response variable named value:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tsibble)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(feasts)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="co"># KPSS test for level stationarity</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>train <span class="sc">|&gt;</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(Y, unitroot_kpss, <span class="at">type =</span> <span class="st">"mu"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+  kpss_stat kpss_pvalue
+      &lt;dbl&gt;       &lt;dbl&gt;
+1     0.173         0.1</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># KPSS test for trend stationarity</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>train <span class="sc">|&gt;</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(Y, unitroot_kpss, <span class="at">type =</span> <span class="st">"tau"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+  kpss_stat kpss_pvalue
+      &lt;dbl&gt;       &lt;dbl&gt;
+1    0.0953         0.1</code></pre>
+</div>
+</div>
+</section>
 </section>
 <section id="examine-pacf" class="level1">
 <h1>9. Examine PACF</h1>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>train <span class="sc">|&gt;</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">PACF</span>(Y) <span class="sc">|&gt;</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>() <span class="sc">+</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Partial Autocorrelation Function (PACF)"</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>train <span class="sc">|&gt;</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">PACF</span>(Y) <span class="sc">|&gt;</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>() <span class="sc">+</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Partial Autocorrelation Function (PACF)"</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="tsforecasting_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="tsforecasting_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -464,93 +694,89 @@ Y_t = c + \phi_1Y_{t-1}+\phi_2Y_{t-2}
 <li>ARMA(2,2)</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>fit_arma <span class="ot">&lt;-</span> train <span class="sc">|&gt;</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">AR1 =</span> <span class="fu">ARIMA</span>(Y <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>)),</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">AR2 =</span> <span class="fu">ARIMA</span>(Y <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">0</span>)),</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">MA1 =</span> <span class="fu">ARIMA</span>(Y <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>)),</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">ARMA11 =</span> <span class="fu">ARIMA</span>(Y <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)),</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">ARMA21 =</span> <span class="fu">ARIMA</span>(Y <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>)),</span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">ARMA22 =</span> <span class="fu">ARIMA</span>(Y <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">2</span>))</span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: It looks like you're trying to fully specify your ARIMA model but have not said if a constant should be included.
-You can include a constant using `ARIMA(y~1)` to the formula or exclude it by adding `ARIMA(y~0)`.</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 1 error encountered for ARMA22
-[1] Could not find an appropriate ARIMA model.
-This is likely because automatic selection does not select models with characteristic roots that may be numerically unstable.
-For more details, refer to https://otexts.com/fpp3/arima-r.html#plotting-the-characteristic-roots</code></pre>
-</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>fit_arma <span class="ot">&lt;-</span> train <span class="sc">|&gt;</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">AR1 =</span> <span class="fu">ARIMA</span>(Y <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>)),</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">AR2 =</span> <span class="fu">ARIMA</span>(Y <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">0</span>)),</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">MA1 =</span> <span class="fu">ARIMA</span>(Y <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>)),</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">ARMA11 =</span> <span class="fu">ARIMA</span>(Y <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)),</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">ARMA21 =</span> <span class="fu">ARIMA</span>(Y <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>)),</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">ARMA22 =</span> <span class="fu">ARIMA</span>(Y <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">2</span>))</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="model-summaries" class="level1">
 <h1>11. Model summaries</h1>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(fit_arma)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(fit_arma)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in report.mdl_df(fit_arma): Model reporting is only supported for
 individual models, so a glance will be shown. To see the report for a specific
 model, use `select()` and `filter()` to identify a single model.</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 5 × 8
+<pre><code># A tibble: 6 × 8
   .model sigma2 log_lik   AIC  AICc   BIC ar_roots  ma_roots 
   &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;list&gt;    &lt;list&gt;   
-1 AR1     1.18    -375.  755.  755.  766. &lt;cpl [1]&gt; &lt;cpl [0]&gt;
-2 AR2     0.943   -346.  701.  701.  715. &lt;cpl [2]&gt; &lt;cpl [0]&gt;
-3 MA1     0.925   -345.  695.  695.  706. &lt;cpl [0]&gt; &lt;cpl [1]&gt;
-4 ARMA11  0.872   -337.  681.  682.  696. &lt;cpl [1]&gt; &lt;cpl [1]&gt;
-5 ARMA21  0.872   -336.  683.  683.  700. &lt;cpl [2]&gt; &lt;cpl [1]&gt;</code></pre>
+1 AR1     1.22    -439.  884.  885.  895. &lt;cpl [1]&gt; &lt;cpl [0]&gt;
+2 AR2     0.952   -403.  815.  815.  830. &lt;cpl [2]&gt; &lt;cpl [0]&gt;
+3 MA1     0.973   -407.  820.  820.  831. &lt;cpl [0]&gt; &lt;cpl [1]&gt;
+4 ARMA11  0.900   -395.  799.  799.  814. &lt;cpl [1]&gt; &lt;cpl [1]&gt;
+5 ARMA21  0.897   -394.  799.  799.  817. &lt;cpl [2]&gt; &lt;cpl [1]&gt;
+6 ARMA22  0.892   -393.  798.  798.  820. &lt;cpl [2]&gt; &lt;cpl [2]&gt;</code></pre>
 </div>
 </div>
 </section>
 <section id="extract-estimated-coefficients" class="level1">
 <h1>12. Extract estimated coefficients</h1>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(fit_arma)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(fit_arma)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 14 × 6
+<pre><code># A tibble: 19 × 6
    .model term     estimate std.error statistic  p.value
    &lt;chr&gt;  &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
- 1 AR1    ar1        0.624     0.0497    12.6   2.01e-28
- 2 AR1    constant   1.24      0.0680    18.2   7.90e-48
- 3 AR2    ar1        0.903     0.0565    16.0   4.41e-40
- 4 AR2    ar2       -0.451     0.0566    -7.97  5.77e-14
- 5 AR2    constant   1.81      0.0611    29.6   9.91e-84
- 6 MA1    ma1        0.855     0.0301    28.4   2.95e-80
- 7 MA1    constant   3.30      0.112     29.5   2.82e-83
- 8 ARMA11 ar1        0.296     0.0712     4.15  4.50e- 5
- 9 ARMA11 ma1        0.757     0.0502    15.1   5.22e-37
-10 ARMA11 constant   2.33      0.103     22.6   1.90e-62
-11 ARMA21 ar1        0.364     0.101      3.59  3.98e- 4
-12 ARMA21 ar2       -0.0909    0.0918    -0.991 3.23e- 1
-13 ARMA21 ma1        0.702     0.0845     8.31  6.30e-15
-14 ARMA21 constant   2.40      0.0994    24.2   2.36e-67</code></pre>
+ 1 AR1    ar1         0.635    0.0452    14.1   1.33e-34
+ 2 AR1    constant    1.25     0.0642    19.4   2.05e-54
+ 3 AR2    ar1         0.932    0.0517    18.0   3.14e-49
+ 4 AR2    ar2        -0.467    0.0517    -9.03  2.44e-17
+ 5 AR2    constant    1.82     0.0570    32.0   5.08e-97
+ 6 MA1    ma1         0.844    0.0273    31.0   6.62e-94
+ 7 MA1    constant    3.41     0.106     32.1   2.15e-97
+ 8 ARMA11 ar1         0.331    0.0650     5.10  6.15e- 7
+ 9 ARMA11 ma1         0.733    0.0479    15.3   3.42e-39
+10 ARMA11 constant    2.28     0.0958    23.8   3.19e-70
+11 ARMA21 ar1         0.443    0.104      4.25  2.84e- 5
+12 ARMA21 ar2        -0.135    0.0920    -1.47  1.42e- 1
+13 ARMA21 ma1         0.638    0.0946     6.75  8.25e-11
+14 ARMA21 constant    2.36     0.0903    26.1   3.24e-78
+15 ARMA22 ar1         0.938    0.216      4.33  2.02e- 5
+16 ARMA22 ar2        -0.316    0.0845    -3.74  2.23e- 4
+17 ARMA22 ma1         0.140    0.219      0.640 5.23e- 1
+18 ARMA22 ma2        -0.360    0.176     -2.04  4.21e- 2
+19 ARMA22 constant    1.29     0.0429    30.0   5.13e-91</code></pre>
 </div>
 </div>
 </section>
 <section id="extract-fitted-values-and-residuals" class="level1">
 <h1>13. Extract fitted values and residuals</h1>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(fit_arma)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(fit_arma)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tsibble: 1,500 x 6 [1]
+<pre><code># A tsibble: 1,740 x 6 [1]
 # Key:       .model [6]
-   .model  Time     Y .fitted   .resid   .innov
-   &lt;chr&gt;  &lt;int&gt; &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
- 1 AR1        1  4.82    3.63  1.19     1.19   
- 2 AR1        2  4.76    4.25  0.509    0.509  
- 3 AR1        3  4.20    4.21 -0.00902 -0.00902
- 4 AR1        4  3.07    3.86 -0.794   -0.794  
- 5 AR1        5  4.51    3.16  1.35     1.35   
- 6 AR1        6  5.48    4.06  1.43     1.43   
- 7 AR1        7  2.67    4.66 -1.99    -1.99   
- 8 AR1        8  2.22    2.91 -0.683   -0.683  
- 9 AR1        9  2.68    2.63  0.0504   0.0504 
-10 AR1       10  1.86    2.91 -1.05    -1.05   
-# ℹ 1,490 more rows</code></pre>
+   .model  Time     Y .fitted  .resid  .innov
+   &lt;chr&gt;  &lt;int&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+ 1 AR1        1  4.82    3.74  1.09    1.09  
+ 2 AR1        2  4.76    4.31  0.449   0.449 
+ 3 AR1        3  4.20    4.27 -0.0682 -0.0682
+ 4 AR1        4  3.07    3.92 -0.847  -0.847 
+ 5 AR1        5  4.51    3.20  1.31    1.31  
+ 6 AR1        6  5.48    4.11  1.37    1.37  
+ 7 AR1        7  2.67    4.73 -2.06   -2.06  
+ 8 AR1        8  2.22    2.94 -0.719  -0.719 
+ 9 AR1        9  2.68    2.66  0.0187  0.0187
+10 AR1       10  1.86    2.95 -1.09   -1.09  
+# ℹ 1,730 more rows</code></pre>
 </div>
 </div>
 </section>
@@ -558,14 +784,14 @@ model, use `select()` and `filter()` to identify a single model.</code></pre>
 <h1>14. Residual diagnostics for ARMA(2,1)</h1>
 <p>The <code>gg_tsresiduals()</code> function requires a mable containing only one model. Therefore, we fit the ARMA(2,1) model separately for residual diagnostics.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>fit_arma21 <span class="ot">&lt;-</span> train <span class="sc">|&gt;</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">ARMA21 =</span> <span class="fu">ARIMA</span>(Y <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>))</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Residual diagnostic plots</span></span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>fit_arma21 <span class="sc">|&gt;</span></span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gg_tsresiduals</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>fit_arma21 <span class="ot">&lt;-</span> train <span class="sc">|&gt;</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">ARMA21 =</span> <span class="fu">ARIMA</span>(Y <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Residual diagnostic plots</span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>fit_arma21 <span class="sc">|&gt;</span></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gg_tsresiduals</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: `gg_tsresiduals()` was deprecated in feasts 0.4.2.
 ℹ Please use `ggtime::gg_tsresiduals()` instead.</code></pre>
@@ -573,7 +799,7 @@ model, use `select()` and `filter()` to identify a single model.</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="tsforecasting_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="tsforecasting_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -583,18 +809,18 @@ model, use `select()` and `filter()` to identify a single model.</code></pre>
 <h1>15. Ljung-Box test</h1>
 <p>The Ljung-Box test examines whether the model residuals exhibit significant autocorrelation.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(fit_arma21) <span class="sc">|&gt;</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    .innov,</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    ljung_box,</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">lag =</span> <span class="dv">20</span>,</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">dof =</span> <span class="dv">3</span></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(fit_arma21) <span class="sc">|&gt;</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>    .innov,</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    ljung_box,</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">lag =</span> <span class="dv">20</span>,</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">dof =</span> <span class="dv">3</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 3
   .model lb_stat lb_pvalue
   &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;
-1 ARMA21    16.5     0.491</code></pre>
+1 ARMA21    18.1     0.383</code></pre>
 </div>
 </div>
 <p><strong>Interpretation:</strong></p>
@@ -608,30 +834,30 @@ model, use `select()` and `filter()` to identify a single model.</code></pre>
 <h1>16. Generate forecasts for the test period</h1>
 <p>We generate 50-step-ahead forecasts from all six models.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>fc <span class="ot">&lt;-</span> fit_arma <span class="sc">|&gt;</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">forecast</span>(<span class="at">h =</span> <span class="fu">nrow</span>(test))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>fc <span class="ot">&lt;-</span> fit_arma <span class="sc">|&gt;</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">forecast</span>(<span class="at">h =</span> <span class="fu">nrow</span>(test))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="forecast-table" class="level1">
 <h1>17. Forecast table</h1>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>fc</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>fc</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A fable: 300 x 4 [1]
+<pre><code># A fable: 60 x 4 [1]
 # Key:     .model [6]
    .model  Time
    &lt;chr&gt;  &lt;dbl&gt;
- 1 AR1      251
- 2 AR1      252
- 3 AR1      253
- 4 AR1      254
- 5 AR1      255
- 6 AR1      256
- 7 AR1      257
- 8 AR1      258
- 9 AR1      259
-10 AR1      260
-# ℹ 290 more rows
+ 1 AR1      291
+ 2 AR1      292
+ 3 AR1      293
+ 4 AR1      294
+ 5 AR1      295
+ 6 AR1      296
+ 7 AR1      297
+ 8 AR1      298
+ 9 AR1      299
+10 AR1      300
+# ℹ 50 more rows
 # ℹ 2 more variables: Y &lt;dist&gt;, .mean &lt;dbl&gt;</code></pre>
 </div>
 </div>
@@ -639,32 +865,24 @@ model, use `select()` and `filter()` to identify a single model.</code></pre>
 <section id="forecast-plots" class="level1">
 <h1>18. Forecast plots</h1>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>fc <span class="sc">|&gt;</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>(train, <span class="at">level =</span> <span class="dv">95</span>) <span class="sc">+</span></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autolayer</span>(</span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    test,</span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    Y,</span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"black"</span></span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Forecasts from Different ARMA Models"</span>,</span>
-<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Time"</span>,</span>
-<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">expression</span>(Y[t]),</span>
-<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"Model"</span></span>
-<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in max(ids, na.rm = TRUE): no non-missing arguments to max; returning
--Inf</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 50 rows containing missing values or values outside the scale range
-(`geom_line()`).</code></pre>
-</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>fc <span class="sc">|&gt;</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>(train, <span class="at">level =</span> <span class="dv">95</span>) <span class="sc">+</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autolayer</span>(</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>    test,</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>    Y,</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"black"</span></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Forecasts from Different ARMA Models"</span>,</span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Time"</span>,</span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">expression</span>(Y[t]),</span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"Model"</span></span>
+<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="tsforecasting_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="tsforecasting_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -674,22 +892,22 @@ model, use `select()` and `filter()` to identify a single model.</code></pre>
 <h1>19. Compare actual and fitted values</h1>
 <p>We illustrate the fitted values for the ARMA(2,1) model.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>fitted_data <span class="ot">&lt;-</span> <span class="fu">augment</span>(fit_arma21)</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitted_data, <span class="fu">aes</span>(<span class="at">x =</span> Time)) <span class="sc">+</span></span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> Y, <span class="at">colour =</span> <span class="st">"Actual"</span>)) <span class="sc">+</span></span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted, <span class="at">colour =</span> <span class="st">"Fitted"</span>)) <span class="sc">+</span></span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Actual versus Fitted Values: ARMA(2,1)"</span>,</span>
-<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Time"</span>,</span>
-<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">expression</span>(Y[t]),</span>
-<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"Series"</span></span>
-<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>fitted_data <span class="ot">&lt;-</span> <span class="fu">augment</span>(fit_arma21)</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitted_data, <span class="fu">aes</span>(<span class="at">x =</span> Time)) <span class="sc">+</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> Y, <span class="at">colour =</span> <span class="st">"Actual"</span>)) <span class="sc">+</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted, <span class="at">colour =</span> <span class="st">"Fitted"</span>)) <span class="sc">+</span></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Actual versus Fitted Values: ARMA(2,1)"</span>,</span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Time"</span>,</span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">expression</span>(Y[t]),</span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"Series"</span></span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="tsforecasting_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="tsforecasting_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -699,22 +917,22 @@ model, use `select()` and `filter()` to identify a single model.</code></pre>
 <h1>20. Forecast accuracy using fable</h1>
 <p>The <code>accuracy()</code> function from <code>fabletools</code> calculates forecast accuracy by comparing forecasts with actual observations in the test set.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>accuracy_results <span class="ot">&lt;-</span> <span class="fu">accuracy</span>(</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  fc,</span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  test</span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>accuracy_results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>accuracy_results <span class="ot">&lt;-</span> <span class="fu">accuracy</span>(</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  fc,</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  test</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>accuracy_results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 10
-  .model .type      ME   RMSE    MAE   MPE  MAPE  MASE RMSSE   ACF1
-  &lt;chr&gt;  &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
-1 AR1    Test    0.615   1.85   1.43 -11.6  48.2   NaN   NaN  0.662
-2 AR2    Test    0.553   1.77   1.39 -12.9  47.6   NaN   NaN  0.645
-3 ARMA11 Test    0.567   1.81   1.43 -13.3  48.9   NaN   NaN  0.650
-4 ARMA21 Test    0.559   1.81   1.42 -13.5  48.9   NaN   NaN  0.648
-5 ARMA22 Test  NaN     NaN    NaN    NaN   NaN     NaN   NaN NA    
-6 MA1    Test    0.548   1.82   1.44 -14.2  49.7   NaN   NaN  0.645</code></pre>
+  .model .type     ME  RMSE   MAE   MPE  MAPE  MASE RMSSE  ACF1
+  &lt;chr&gt;  &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 AR1    Test  -0.496  2.34  2.10 -88.3  112.   NaN   NaN 0.609
+2 AR2    Test  -0.403  2.27  2.01 -81.1  105.   NaN   NaN 0.600
+3 ARMA11 Test  -0.406  2.29  2.01 -82.7  106.   NaN   NaN 0.602
+4 ARMA21 Test  -0.376  2.27  1.99 -80.8  105.   NaN   NaN 0.600
+5 ARMA22 Test  -0.364  2.25  1.97 -79.5  103.   NaN   NaN 0.598
+6 MA1    Test  -0.432  2.30  2.04 -84.0  108.   NaN   NaN 0.605</code></pre>
 </div>
 </div>
 <section id="interpretation-of-accuracy-measures" class="level2">
